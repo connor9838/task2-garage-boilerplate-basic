@@ -4,6 +4,7 @@ import { adminAuth } from '@/lib/firebase/admin'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { ActionResult } from '@/types'
+import type { DecodedIdToken } from 'firebase-admin/auth'
 
 const SESSION_COOKIE_NAME = '__session'
 
@@ -11,7 +12,7 @@ const SESSION_COOKIE_NAME = '__session'
  * Verify the current session cookie and return the decoded token.
  * Use this in Server Components and Server Actions to authenticate requests.
  */
-export async function getServerSession() {
+export async function getServerSession(): Promise<DecodedIdToken | null> {
   const cookieStore = await cookies()
   const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value
 

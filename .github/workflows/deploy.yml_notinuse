@@ -71,5 +71,3 @@ jobs:
             --only functions \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
             --non-interactive
-          npx firebase-tools login
-          npx firebase-tools deploy --only firestore:rules
