@@ -1,7 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { teamData } from '@/features/team/data'
+import type { StaticImageData } from 'next/image'
 
 function getInitials(name: string): string {
   return name
@@ -11,27 +13,43 @@ function getInitials(name: string): string {
     .toUpperCase()
 }
 
-function AvatarInitials({ name, large = false }: { name: string; large?: boolean }) {
+function AvatarInitials({
+  name,
+  photo,
+  large = false,
+}: {
+  name: string
+  photo: StaticImageData | string
+  large?: boolean
+}) {
   const initials = getInitials(name)
 
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`flex items-center justify-center rounded-full bg-zinc-300 ${
-          large ? 'h-20 w-20' : 'h-12 w-12'
+        className={`relative flex items-center justify-center overflow-hidden rounded-full bg-zinc-300 ${
+          large ? 'h-20 w-20' : 'h-14 w-14'
         }`}
       >
-        <span
-          className={`font-medium text-zinc-500 ${
-            large ? 'text-xl' : 'text-base'
-          }`}
-        >
-          {initials}
-        </span>
+        {typeof photo === 'string' ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo}
+            alt={name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <Image
+            src={photo}
+            alt={name}
+            fill
+            className="object-cover"
+          />
+        )}
       </div>
 
       {!large && (
-        <span className="text-sm font-medium text-zinc-600">
+        <span className="text-xs font-medium text-zinc-600">
           {initials}
         </span>
       )}
@@ -43,32 +61,34 @@ function TeamMemberCard({
   name,
   role,
   blurb,
+  photo,
   onClick,
 }: {
   name: string
   role: string
   blurb: string
+  photo: StaticImageData | string
   onClick: () => void
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex h-[155px] w-full flex-col items-center rounded-lg border border-zinc-200 bg-white px-4 py-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="flex h-[180px] w-full flex-col items-center rounded-lg border border-zinc-200 bg-white px-4 py-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
     >
-      <AvatarInitials name={name} />
+      <AvatarInitials name={name} photo={photo} />
 
       <div className="mt-3 w-full text-center">
         <h3 className="text-sm font-semibold text-zinc-900">
           {name}
         </h3>
 
-        <p className="mt-1 text-[10px] font-medium text-blue-500">
+        <p className="mt-0.5 text-[11px] font-medium text-blue-500">
           {role}
         </p>
       </div>
 
-      <p className="mt-3 w-full overflow-hidden text-center text-[9px] leading-relaxed text-zinc-500">
+      <p className="mt-2 w-full overflow-hidden text-center text-[10px] leading-relaxed text-zinc-500 line-clamp-3">
         {blurb}
       </p>
     </button>
@@ -81,10 +101,10 @@ export default function TeamPage() {
   >(null)
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-100 p-8">
-      <div className="w-full max-w-[700px] rounded-xl bg-white px-10 py-9 shadow-sm">
+    <div className="h-screen w-full overflow-hidden bg-zinc-100 p-4 flex items-center justify-center">
+      <div className="w-full max-w-[700px] rounded-xl bg-white px-8 py-6 shadow-sm">
         {/* Title */}
-        <h1 className="mb-7 text-center text-2xl font-bold text-zinc-800">
+        <h1 className="mb-5 text-center text-xl font-bold text-zinc-800">
           {teamData.name}
         </h1>
 
@@ -96,6 +116,7 @@ export default function TeamPage() {
               name={member.name}
               role={member.role}
               blurb={member.blurb}
+              photo={member.photo}
               onClick={() => setSelectedMember(member)}
             />
           ))}
@@ -105,21 +126,22 @@ export default function TeamPage() {
       {/* Profile Modal */}
       {selectedMember && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
           onClick={() => setSelectedMember(null)}
         >
           <div
-            className="w-full max-w-[500px] rounded-xl bg-white p-8 shadow-xl"
+            className="w-full max-w-[450px] rounded-xl bg-white p-7 shadow-xl"
             onClick={(event) => event.stopPropagation()}
           >
             {/* Profile Header */}
             <div className="flex flex-col items-center text-center">
               <AvatarInitials
                 name={selectedMember.name}
+                photo={selectedMember.photo}
                 large
               />
 
-              <h2 className="mt-5 text-2xl font-bold text-zinc-900">
+              <h2 className="mt-4 text-2xl font-bold text-zinc-900">
                 {selectedMember.name}
               </h2>
 
@@ -129,7 +151,7 @@ export default function TeamPage() {
             </div>
 
             {/* Divider */}
-            <div className="my-6 border-t border-zinc-200" />
+            <div className="my-5 border-t border-zinc-200" />
 
             {/* Full Blurb */}
             <div>
@@ -146,7 +168,7 @@ export default function TeamPage() {
             <button
               type="button"
               onClick={() => setSelectedMember(null)}
-              className="mt-7 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+              className="mt-5 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
             >
               Close
             </button>
