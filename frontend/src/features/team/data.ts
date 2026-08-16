@@ -1,11 +1,9 @@
 import type { Team } from './types'
 
-// Use require() instead of import for images
-// This is more reliable for Next.js with TypeScript
-const connorEyles = require('./connor-eyles.jpg').default
-const martelKho = require('./martel-kho.jpg').default
-const pasangLhamu = require('./pasang-lhamu-sherpa.jpg').default
-const jahanHaidari = require('./jahan-haidari.jpg').default
+import connorEyles from './connor-eyles.jpg'
+import martelKho from './martel-kho.jpg'
+import pasangLhamu from './pasang-lhamu-sherpa.jpg'
+import jahanHaidari from './jahan-haidari.jpg'
 
 // Placeholder for Mahin (no photo yet)
 const placeholderImage = {
